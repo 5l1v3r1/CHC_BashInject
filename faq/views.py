@@ -3,6 +3,7 @@ from django.shortcuts import render
 from .models import FAQ
 from django.db.models import Q
 from selenium import webdriver
+from django.db.utils import OperationalError
 
 # Just using function based views for now because they're easy
 def faq_home(request):
@@ -27,11 +28,18 @@ def faq_home(request):
     #     # driver.save_screenshot('screen.png')
 
     if "id" in request.GET:
-        queryset = FAQ.objects.raw("select id, title, user, answer from faq_faq where id=" + request.GET["id"])
+        try:
+            queryset = list(FAQ.objects.raw("select id, title, user, answer from faq_faq where id=" + request.GET["id"]))
+            error = None
+        except OperationalError as err:
+            queryset = FAQ.objects.all()
+            error = str(err) + "\n in query \n\"\"\"" + \
+                     "select id, title, user, answer from faq_faq where id=" + request.GET["id"] + "\"\"\""
     else:
         queryset = FAQ.objects.all()
+        error = None
 
-    error = None
+
 
     # if str(user) != 'admin':
     #     queryset = queryset.filter(Q(user__exact=str(user)) | Q(user__exact='admin'))
@@ -43,7 +51,7 @@ def faq_home(request):
     context = {
         "questions": queryset,
         "username": user,
-        "error": error
+        "errorSerious": error
     }
 
     if "id" in request.GET:
