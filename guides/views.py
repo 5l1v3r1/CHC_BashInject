@@ -18,5 +18,4 @@ def guides_home(request):
          "error" : error,
     }
     response = render(request, "guides.html", context)
-    response['X-XSS-Protection'] = 0
     return response

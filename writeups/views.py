@@ -19,7 +19,6 @@ def writeups_home(request):
         "page" : page
     }
     response = render(request, "writeups-main.html", context)
-    response['X-XSS-Protection'] = 0
     return response
 
 

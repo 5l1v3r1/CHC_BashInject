@@ -15,11 +15,13 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 
+from django.http import HttpResponse
+
 from .views import calendar, registration, admin, login_vuln
 
 urlpatterns = [
     url(r'^$', calendar),
-    url(r'^register$', registration),
+    url(r'^register$', lambda request: HttpResponse('Temporarily Disabled due to HACK!')),
     url(r'^loginvuln$', login_vuln),
     url(r'^adminpage$', admin),
 ]
