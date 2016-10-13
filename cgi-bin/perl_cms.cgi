@@ -1,43 +1,39 @@
 #!/usr/bin/perl
 #File: perl_cms.cgi
 use CGI;
-use strict;
 
-#what would happen if we didn't have this? ;)
 $ENV{'PATH'} = '/bin:/usr/bin:/usr/local/bin';
 
-use CGI;
-my $q = CGI->new;
-print header
+$cgi = new CGI;
+FRONTHTML(); 
+FORMHTML();
 
-$cmshtml = "../templates/perl_cms.html"
-$homehtml = "../"
-$content = "";
+if ($cgi->param){
 
-if (defined ($q->upload('homework'))) {
-	if (open (<HOMEWORK>, $q->upload('homework'))){
-
-		#write netid to logfile: hw_log.txt
-		if (open (<NETID>, $q->param('netid'))){
-			open(LOGFILE, '>>', "hw_log.txt")
-			print <NETID>
-			close (NETID)
-			close (LOGFILE)
-		}
-		while(){
-			$content.=$_;
-		}
-		close(HOMEWORK);
+	#save homework to hwfiles path
+	$hwpath =  "../hwfiles/";
+	$hwhandle = $cgi->upload('homework');
+	if (defined $hwhandle) {
+		print $cgi->header(-type=>"text/plain");
+		open (HOMEWORK, $CGI->param('homework'));
+		open (SAVEDHW, ">", $hwpath.$cgi->param('homework'));
+		print <SAVEDHW> <HOMEWORK>; #save the contents of homework
+		close(SAVEDHW);
+		close (HOMEWORK);
 	}
-	$print $content; #
-} else { #assume we just loaded page
-	FRONTHTML();
-	BACKHTML();
+
+	#save netid to guestbook
+	#consider changiing hw_log.txt to hidden script
+	if (open (NETID, $cgi->param('netid'))){
+		open(LOGFILE, '>>', "hw_log.txt");
+		print <LOGFILE> <NETID>;
+		close (NETID);
+		close (LOGFILE);
+	}
+
 }
 
-exit 0;
-#RFI/LFI vulnerability in GET request for a file
-
+BACKHTML();
 
 sub FRONTHTML {
 print << EOF;
@@ -122,17 +118,31 @@ print << EOF;
 EOF
 }
 
-#forms
-print header();
-print start_html(	
-  -title=>'Perl CMS!',
-	)
-print h1('Welcome to Perl CMS')
-print start_form('POST', 'perl_cms.cgi' ,&CGI::MULTIPART);
-print textfield('netid', 'netid', 50, 80);
-print filefield('homework');
-print submit('submit_hw');
-print hidden('cmd','cat'); #code injection
-print end_form;
-print end_html
+sub FORMHTML {
+print << EOF;
+	<h3>Upload Homework Here!</h3>  <!---Add a URL for here.-->
+    <FORM class="form-signin" METHOD="POST" action="{% url 'perl_cms'%}" enctype="multipart/form-data">
+    <input type="text" class="form-control" name="netid" placeholder="netid" required autofocus>
+    <label for="homework">Upload Homework</label>
+    <input type="file" class="form-control" name="homework" >
+    <input type="hidden"  name="lastlocation" value="perl_cms"> 
+    <button class="btn btn-lg btn-primary btn-block" type="submit">
+        Upload
+    </button>
+	</FORM>
+EOF
+}
+#alt script 
+# print header();
+# print start_html(	
+#   -title=>'Perl CMS!',
+# 	)
+# print h1('Welcome to Perl CMS')
+# print start_form('POST', 'perl_cms.cgi' ,&CGI::MULTIPART);
+# print textfield('netid', 'netid', 50, 80);
+# print filefield('homework');
+# print submit('submit_hw');
+# print hidden('cmd','cat'); #code injection
+# print end_form;
+
 
