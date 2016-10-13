@@ -1,0 +1,65 @@
+Introduction
+
+Perl is an early interpreted programming languages that was created with the purpose of being a convenient scripting language for Unix system administrators. In the early days of the Internet, Perl was commonly used on web servers to provide dynamic web pages and is sometimes considered the "glue of the Internet". The latest Perl is Perl 6, but the version that dominates the Internet is Perl 5, which was the CGI scripting language of choice for many web application writers in the 1990s to early 2000s.
+
+Perl is often associated with CGI, but Perl is not CGI. CGI, Common Gateway Intefrace, is a standard defining the interface for how a web server and the web applications on the server pass information to each other. Essentially, it is a way for a web server to run a script with some data and return the result of the script as web page content. 
+
+It is traditional to put all cgi scripts in a /cgi-bin/ directory and to have the script end with .cgi regardless of what language the script is actually written in. The cgi script itself can be written in any language. 
+
+Today, CGI is not the perferred way for web applications to communicate with web server because faster and more efficient alternatives, such as the methods used by languages like ASP and PHP, have been developed. However, it is still worth learning about Perl and CGI because many web applications do still use Perl CGI, and many of the vulnerabilities that we see in Perl are also present in other languages such as C and PHP. 
+
+HTTP REQUESTS and the GET and POST Parameters
+
+The CGI specification describes specifically the way a CGI script is expected to handle HTTP requests from the Web server. The CGI standard defines many environment variables, to which the server will. To pass the HTTP GET and POST REQUEST parameters to the script, the server writes to the environment variable "QUERY_STRING" for storing the GET parameters and writes the POST parameters to the scripts STDIN, the standard input. 
+
+The CGI script uses the information provided from the server in its execution, and anything that is printed to standard output, is then also returned to the browser of web client. Because of the way the CGI standard defines handling HTTP requests, vulnerabilities in CGI scripts are particularly dangerous since the script runs directly on the server. As we will see later, mistakes in these scripts can lead to arbitrary code execution along with the ability to read and/or modify content on the server. 
+
+The Favorite Functions - exec() and system()
+
+In Perl, the functions we look for when we are looking for vulnerabilities is exec(), system(), open(), eval(). 
+
+(Similar functions exist in other languages. For example, if the CGI were in C, we would be looking for popen(), system(), exec() and the exec family functions.)
+
+In Perl (and C), the exec() and system() functions are used to carry out commands, which we call processes. When either of the functions are called, the current process, which we call the "parent" hands execution to a new process, which we called the "child". One way to think of this is that you create a new tab in your Terminal to run some quick command.  
+
+The main difference between the two functions is that exec() runs the command and replaces the parent process with the child (In the analogy, you exit your original terminal tab). In contrast, system() returns execution to the parent process (In Terminal, you are exiting the new tab instead of your original) when the child finishes.  
+
+The Other Favorite Function - open()
+
+Recall that Perl was created as a multipurpose scripting language for Unix administrators. Therefore, it incorporates many Unix features as prefix and postfix operators on file or commands. 
+	>file		: overwrite the file
+	>>file		: append to the file
+	<file		: read from the file (default for no prefix)
+	|file		: pipe into STDIN of the file command
+	file|		: pipes the result of file command to STDOUT
+	-|			: pipe to "-" for reading or STDIN
+	|-			: pipe to "-" for writing or STDOUT
+
+The pipe (|) when used as postfix or prefix operator is interesting because it assumes that file is a command. This is then where command execution takes place. 
+
+Suppose a copy+pasting programmer is building an image uploader and has the following function when it later opens the image for display. 
+
+$img_handle = $q->param('usr_img'); #retrieves from GET parameter called usr_img
+open (IMGFILE, "/files/images/$img_handle"); 
+
+A user can then execute commands in /files/images/ by postfixig the pipe. 
+[Input] ../../bin/ls /  		 open (IMGFILE, "/files/images/../../bin/ls / |")
+[Input] ../../bin/rm -rf / | 	 open (IMGFILE, "/files/images/../../bin/rm -rf / |")
+
+
+Environment Paths
+
+use Cwd; 
+$file = cwd().'/'.$file;
+cwd().'/'.$file;
+
+
+
+
+
+Sources
+
+https://www.w3.org/Security/Faq/wwwsf4.html 
+
+http://www.cgisecurity.com/lib/sips.html
+
