@@ -2,7 +2,6 @@ from django.contrib.auth.models import User
 from django.shortcuts import render
 from .models import FAQ
 from django.db.models import Q
-from selenium import webdriver
 from django.db.utils import OperationalError
 
 # Just using function based views for now because they're easy

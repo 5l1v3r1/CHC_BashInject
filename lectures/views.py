@@ -13,7 +13,7 @@ def lectures_home(request):
             Q(title__icontains=search) | Q(description__icontains=search))
         if not queryset:
             error = "No results found for: " + search
-            print error
+            print(error)
     context = {
         "lectures": queryset,
         "error": error,
