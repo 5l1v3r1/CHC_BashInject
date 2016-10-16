@@ -5,7 +5,7 @@ use CGI;
 $ENV{'PATH'} = '/bin:/usr/bin:/usr/local/bin';
 
 $cgi = new CGI;
-FRONTHTML(); 
+FRONTHTML();
 FORMHTML();
 
 if ($cgi->param){
@@ -82,7 +82,7 @@ Content-Type: text/html
     <div class="container">
         <div class="row">
             <div class="col-sm-6 col-md-4 col-md-offset-4">
-                <div>	
+                <div>
 EOF
 }
 
@@ -98,7 +98,7 @@ print << EOF;
 
 
     <hr>
- 
+
 
     <!-- Footer -->
     <footer>
@@ -125,7 +125,7 @@ print << EOF;
     <input type="text" class="form-control" name="netid" placeholder="netid" required autofocus>
     <label for="homework">Upload Homework</label>
     <input type="file" class="form-control" name="homework" >
-    <input type="hidden"  name="lastlocation" value="perl_cms"> 
+    <input type="hidden"  name="lastlocation" value="perl_cms">
     <button class="btn btn-lg btn-primary btn-block" type="submit">
         Upload
     </button>
