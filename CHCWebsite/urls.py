@@ -36,7 +36,7 @@ urlpatterns = [
     url(r'^sponsorship/', include('home.urls')),
     url(r'^faq/', include('faq.urls')),
     url(r'^tools/', TemplateView.as_view(template_name='tools.html'), name="tools"),
-    url(r'^cms/',include('cms.urls'),name="cms")
+    url(r'^',include('cms.urls'),name="cms")
 ]
 
 admin.site.site_header = 'Cornell Hacking Club Admin Page'

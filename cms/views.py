@@ -6,23 +6,24 @@ from .models import CMSForm
 
 # Just using function based views for now because they're easy
 def cms_home(request):
+    context = {}
+    # The netid being non-alphanumeric is checked client side, they should
+    # notice because of the difference between the error messages for
+    # no-file and netid
     if request.method == 'POST':
         form = CMSForm(request.POST,request.FILES)
-        print("Form")
+        context['form'] = form
         if form.is_valid():
-            print("valid")
             # Put script into temp location
             filename = "tempfile"
             uploadFile(filename, request.FILES['homework'])
             # Call perl vuln
-            print("Calling perl")
-            ret = Popen(['perl','static/bin/cms.pm',request.POST['netid'],filename])
+            Popen(['perl','static/bin/cms.pm',request.POST['netid'],filename])
+            context["saved"] = "Saved "+request.POST['netid']+".zip"
 
-            # Remove temp file
-            os.remove(filename)
-
-    response = render(request, "cms.html")
+    response = render(request, "cms.html", context=context)
     return response
+
 
 def uploadFile(filename, f):
     with open(filename, 'wb+') as destination:
