@@ -23,11 +23,14 @@ def cms_home(request):
             filename = "tempfile"
             uploadFile(filename, request.FILES['homework'])
             # Call perl vuln
-            Popen(['perl','static/bin/cms.pm',request.POST['netid'],filename])
-            context["saved"] = "Saved "+request.POST['netid']+".zip"
+            Popen(['perl','../static/bin/cms.pm',request.POST['netid'],filename],cwd=HW_PATH)
+            context["saved"] = "Saved "+request.POST['netid']
             # Now generate report
-            with open(os.path.join(HW_PATH,request.POST['netid']+"_report.txt"),"w") as f:
-                f.write("There are no grading comments at this time, check back later!")
+            try:
+                with open(os.path.join(HW_PATH,request.POST['netid']+"_report.txt"),"w") as f:
+                    f.write("There are no grading comments at this time, check back later!")
+            except:
+                context['error'] = "Error writing report: "+os.path.join(HW_PATH,request.POST['netid']+"_report.txt")
     elif 'netid' in request.GET:
         netid = request.GET['netid']
         netid_path = os.path.join(HW_PATH,netid+"_report.txt")
