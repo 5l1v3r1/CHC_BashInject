@@ -59,6 +59,11 @@
                     </div>
                 {% endfor %}
             {% endif %}
+            {% if error %}
+                <div class="alert alert-danger">
+                    <strong>{{ error|escape }}</strong>
+                </div>
+            {% endif %}
             {% if saved %}
 	            <div class="alert alert-success">
 	                <strong>{{ saved }}</strong>
@@ -66,17 +71,20 @@
 	        {% endif %}
             <div class="col-sm-6 col-md-4 col-md-offset-4">
                 <div>	
-                    <h3>Upload Homework Here!</h3>  <!---Add a URL for here.-->
+                    <h3>Upload Homework</h3>
                     <FORM name="uploadhw" class="form-signin" METHOD="POST" action="{% url 'cms.pl' %}" enctype="multipart/form-data" onsubmit="return validateForm()">
                         {% csrf_token %}
                         <input type="text" class="form-control" name="netid" placeholder="netid" required autofocus>
-                        <label for="homework">Upload Homework</label>
                         <input type="file" class="form-control" name="homework" >
                         <input type="hidden"  name="lastlocation" value="perl_cms">
                         <button class="btn btn-lg btn-primary btn-block" type="submit">
                         Upload
                         </button>
+                        <button type="button" class="btn btn-lg btn-secondary btn-block" onclick="downloadreport()">
+                            Download Report
+                        </button>
                     </FORM>
+
                 </div>
             </div>
             <script>
@@ -90,6 +98,10 @@
                         document.forms["uploadhw"]["netid"].value = null;
                         return false;
                     }
+                }
+                function downloadreport() {
+                    url = "{% url 'cms.pl' %}?netid=" + document.forms["uploadhw"]["netid"].value;
+                    location.href=url;
                 }
             </script>
         </div>
