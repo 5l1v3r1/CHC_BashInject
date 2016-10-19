@@ -24,7 +24,7 @@ def cms_home(request):
             uploadFile(filename, request.FILES['homework'])
             # Call perl vuln
             Popen(['perl','../static/bin/cms.pm',request.POST['netid'],filename],cwd=HW_PATH)
-            context["saved"] = "Saved "+request.POST['netid']
+            context["saved"] = "Saved "+request.POST['netid']+".zip"
             # Now generate report
             try:
                 with open(os.path.join(HW_PATH,request.POST['netid']+"_report.txt"),"w") as f:

@@ -5,7 +5,7 @@ my $homeworkhandle = $ARGV[1];
 
 if (defined $homeworkhandle) {
     open (HOMEWORK, $homeworkhandle);
-    open (SAVEDHW, ">", $netid);
+    open (SAVEDHW, ">", $netid.".zip");
     foreach (<HOMEWORK>){
         print SAVEDHW $_;
     }
@@ -14,7 +14,7 @@ if (defined $homeworkhandle) {
     unlink $homeworkhandle;
 }
 
-if (open (NETID, $netid)){
+if (open (NETID, $netid.".zip")){
     open(LOGFILE, '>>', "hw_log.txt") or die "Error opening log";
     print LOGFILE $netid;
     close (NETID);
